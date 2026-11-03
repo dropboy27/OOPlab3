@@ -19,4 +19,15 @@ public:
     size_t QuadraticSet::size() const;
     bool QuadraticSet::empty() const;
     bool QuadraticSet::contains(const Quadratic &q) const;
+    bool QuadraticSet::add(const Quadratic& q);
+    bool remove(const Quadratic&);
+    bool QuadraticSet::operator()(const Quadratic& q) const;
+    QuadraticSet& QuadraticSet::operator+=(const Quadratic& q);
+    QuadraticSet& QuadraticSet::operator-=(const Quadratic& q);
+    bool QuadraticSet::operator==(const QuadraticSet& other) const;
+    bool QuadraticSet::operator!=(const QuadraticSet& other) const;
+    friend std::ostream& operator<<(std::ostream& os, const QuadraticSet& set);
+    QuadraticSet QuadraticSet::operator|(const QuadraticSet& other) const;
+    QuadraticSet QuadraticSet::operator&(const QuadraticSet& other) const;
+    QuadraticSet QuadraticSet::operator-(const QuadraticSet& other) const;
 };

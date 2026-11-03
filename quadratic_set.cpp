@@ -62,26 +62,26 @@ QuadraticSet::~QuadraticSet()
 
 size_t QuadraticSet::size() const
 {
-    return this->size_;
+    return size_;
 }
 
 bool QuadraticSet::empty() const
 {
-    return this->size_ == 0;
+    return size_ == 0;
 }
 
 bool QuadraticSet::contains(const Quadratic &q) const
 {
-    size_t r = this->size_;
+    size_t r = size_;
     size_t l = 0;
     while (l < r)
     {
         size_t mid = l + (r - l) / 2;
-        if (q == this->data_[mid])
+        if (q == data_[mid])
         {
             return true;
         }
-        if (q < this->data_[mid])
+        if (q < data_[mid])
         {
             r = mid;
         }
@@ -91,4 +91,175 @@ bool QuadraticSet::contains(const Quadratic &q) const
         }
     }
     return false;
+}
+
+
+bool QuadraticSet::add(const Quadratic& q){
+    size_t r = size_;
+    size_t l = 0;
+    
+    while (l < r)
+    {
+        size_t mid = l + (r - l) / 2;
+        if (data_[mid] < q)
+        {
+            l = mid + 1;
+        }
+        else
+        {
+            r = mid;
+        }
+    }
+    size_t pos = l ;
+    if(pos <size_ && data_[pos] == q){
+        return false;
+    }
+    if (size_ == capacity_){
+        if (size_ == 0){
+            capacity_ = 1;
+        }else{
+            capacity_ = size_*2;
+        }
+        Quadratic *newdata = new Quadratic[capacity_];
+        for(int i = 0; i <size_; i++){
+            newdata[i]=data_[i];
+        }
+        
+        delete[] data_;
+        data_ = newdata;
+    }
+    
+    for(size_t i = size_; i >pos; i--){
+        data_[i] =data_[i-1]; 
+    }
+    size_++;
+    data_[pos]=q;
+    return true;
+}
+
+bool QuadraticSet::remove(const Quadratic& q){
+    size_t r = size_;
+    size_t l = 0;
+    
+    while (l < r)
+    {
+        size_t mid = l + (r - l) / 2;
+        if (data_[mid] < q)
+        {
+            l = mid + 1;
+        }
+        else
+        {
+            r = mid;
+        }
+    }
+    size_t pos = l ;
+    if (pos == size_ || !(data_[pos] == q))
+    {
+        return false;
+    }
+    for(size_t i = pos; i + 1 < size_; i++){
+        data_[i] =data_[i+1]; 
+    }
+    size_--;
+    return true;
+}
+
+bool QuadraticSet::operator()(const Quadratic& q)const{
+    return contains(q);
+}
+
+QuadraticSet &QuadraticSet::operator+=(const Quadratic& q){
+    add(q);
+    return *this;
+}
+
+QuadraticSet &QuadraticSet::operator-=(const Quadratic& q){
+    remove(q);
+    return *this;
+}
+
+bool QuadraticSet::operator==(const QuadraticSet& other) const{
+    if(size_!=other.size_){
+        return false;
+    }
+    for(size_t i = 0; i <size_; i++){
+        if (!(data_[i]==other.data_[i])){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool QuadraticSet::operator!=(const QuadraticSet& other) const{
+    return !(*this == other);
+}
+
+std::ostream& operator<<(std::ostream& os, const QuadraticSet& set)
+{
+    os << '{';
+    for (size_t i = 0; i < set.size_; i++)
+    {
+        if (i > 0)
+        {
+            os << ", ";
+        }
+        os << set.data_[i];
+    }
+    os << '}';
+    return os;
+}
+
+
+QuadraticSet QuadraticSet::operator|(const QuadraticSet& other) const{
+    QuadraticSet result{};
+    for(int i = 0; i<size_; i++){
+        result.add(data_[i]);
+    }
+    for(int i = 0; i<other.size_; i++){
+        result.add(other.data_[i]);
+    }
+    return result;
+}
+
+QuadraticSet QuadraticSet::operator&(const QuadraticSet& other) const{
+    QuadraticSet result{};
+    size_t i =0;
+    size_t j = 0;
+    while(i < size_ && j<other.size_){
+        if(data_[i] == other.data_[j]){
+            result.add(data_[i]);
+            i++;
+            j++;
+            continue;
+        }
+        if(data_[i] < other.data_[j]){
+            i++;
+        }else{
+            j++;
+        }
+    }
+    return result;
+}
+QuadraticSet QuadraticSet::operator-(const QuadraticSet& other) const{
+    QuadraticSet result{};
+    size_t i =0;
+    size_t j = 0;
+    while(i < size_ && j<other.size_){
+        if(data_[i] == other.data_[j]){
+            i++;
+            j++;
+            continue;
+        }
+        if(data_[i] < other.data_[j]){
+            result.add(data_[i]);
+            i++;
+        }else{
+            j++;
+        }
+    }
+    for(size_t f =i; f<size_; f++){
+        result.add(data_[f]);
+    }
+    return result;
 }
