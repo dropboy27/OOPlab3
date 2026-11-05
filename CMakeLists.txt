@@ -9,6 +9,9 @@ add_link_options(-fsanitize=address,undefined)
 
 add_library(quadratic_set STATIC quadratic_set.cpp)
 
+add_executable(lab3_app main.cpp)
+target_link_libraries(lab3_app PRIVATE quadratic_set)
+
 include(FetchContent)
 FetchContent_Declare(
     googletest

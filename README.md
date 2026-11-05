@@ -11,7 +11,10 @@ cd build
 cmake ..
 make
 ```
-
+## Запуск
+```bash
+./lab3_app
+```
 ## Запуск тестов
 
 Из папки `build`:
